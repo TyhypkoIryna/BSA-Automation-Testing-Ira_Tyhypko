@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+
 const { App } = require('../src/pages');
 const rundomNumber = () => Date.now();
 
