@@ -1,45 +1,26 @@
 const assert = require('assert');
 const {expect} = require('chai')
+const { App } = require('../src/pages');
+const rundomNumber = () => Date.now();
 //  Тест на логін з не валідними данними
-// [x] перехід по урлу
-// [x] заповнити форму не валідними данними
-// [x] натиснути кнопку увійти
 
-// перехід по урлу
+const app = new App();
 describe('SignIn with Invalid Data:', function () {
-  xit('should not be able to SignIn', async function (){
+  beforeEach(async function(){
     await browser.setWindowSize(1440, 960);
     await browser.url('http://46.101.234.121/sign-in');
+  });
+  this.afterEach(async function(){
+    await browser.reloadSession();
+  });
 
-// заповнити форму 
-    const emailField = await $('input[name="email"]');
-    const passwordField = await $('input[name="password"]');
-    const signUpButton = await $('button');
 
-    await emailField.waitForDisplayed({ timeout: 5000 });
-    await emailField.setValue(`@admin.com`);
+  it('should not be able to SignIn with Invalid Data', async function (){
 
-    await passwordField.waitForDisplayed({ timeout: 5000 });
-    await passwordField.setValue('Pa 5w?ord');
+    await app.authPage.InvalidDatalogIn({ 
+      email: `marcus${rundomNumber()}@gmail.com`,
+      password: 'Pa5 5wo&r*d',})
+    });
 
-// натиснути кнопку рег.
-
-    await signUpButton.waitForDisplayed({ timeout: 5000 });
-        await signUpButton.click();
-// перевірка результату
-await browser.waitUntil( 
-    async function () {
-      const url = await browser.getUrl();
-      return url === 'http://46.101.234.121/sign-in';
-    },
-    { timeout: 5000 },
-  );
-  
-  const url = await browser.getUrl();
-  expect(url).to.be.eql('http://46.101.234.121/sign-in');
-
-  await browser.reloadSession();
-
-});
 });
 
