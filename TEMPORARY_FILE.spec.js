@@ -1,3 +1,4 @@
+const assert = require('assert');
 const {expect} = require('chai');
 //  Тест на додавання нової клініки
 // [x] перехід по урлу
