@@ -8,19 +8,13 @@ const {expect} = require('chai');
 // [x] заповнити данні
 // [x] натиснути кнопку Add
 // [x] перевірка результату
-
+const rundomNumber = () => Math.floor(Math.random()*10000).toString();
 // перехід по урлу
 describe('New clinic:', function () {
-    beforeEach(async function(){
-        await browser.setWindowSize(1440, 960);
-        await browser.url('http://46.101.234.121/sign-in');
-      });
-      this.afterEach(async function(){
-        await browser.reloadSession();
-      });
-
 
   it('should be able to add new clinic', async function (){
+       await browser.setWindowSize(1440, 960);
+        await browser.url('http://46.101.234.121/sign-in');
 
 // заповнити форму 
     const emailField = await $('input[name="email"]');
@@ -38,49 +32,84 @@ describe('New clinic:', function () {
     await signInButton.waitForDisplayed({ timeout: 5000 });
     await signInButton.click(); 
 
+    await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://46.101.234.121/doctors';
+        },
+        { timeout: 5000 },
+      );
 
-
-// натиснути кнопку Clinics
-    const Clinics = await $('//a[contains(text(), "Clinics")]');
-    await Clinics.waitForDisplayed({ timeout: 5000 });
-    await Clinics.click();
-
+      const ClinicsButton = await $('.link_link__3zEN3=Clinics');
+      await ClinicsButton.click();
+  
+      await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://46.101.234.121/clinics';
+        },
+        { timeout: 5000 },
+      );
+  
 
 // натиснути кнопку Add
-    const AddClinics = await $('button.styles_primary-dark__1WnyR');
+    const AddClinics = await  $('.styles_clinicsPageWrapper__1lCsn .styles_btn___s1BB');
 
     await AddClinics.waitForDisplayed({ timeout: 5000 });
     await AddClinics.click();
 
+
+    await browser.waitUntil(
+        async function () {
+          const AddClinicForm = await $('.styles_container__pnjAI');
+          if(AddClinicForm){
+            return true
+          } else {
+            return false
+          }
+        },
+        { timeout: 5000 },
+      );
+
 // заповнити данні
     const clinicnameField = await $('input[name="name"]');
-    await clinicnameField.waitForDisplayed({ timeout: 5000 });
-    await clinicnameField.setValue('Dobrobut');
-
+    const clinicnameFieldValue = `Dobrobut Clinic ${rundomNumber()}`;
     const addressField = await $('input[name="address"]');
-    await addressField.waitForDisplayed({ timeout: 5000 });
-    await addressField.setValue('Svyatoshinska Street, 3');
+    const addressFieldValue = `Svyatoshinska Address ${rundomNumber()}`;
 
-    const ddls = await $$('div.selectStyles__control');
+    
+    const ddls = await $$('.styles_container__pnjAI .selectStyles__control');
 
     const status = ddls[1];
     const city = ddls[1];
-       
-    const state = await $('div.selectStyles__option=state');
-    await status.click();
-    await state.waitForDisplayed({ timeout: 5000 });
-    await state.click();
- 
-      
-    const newYork = await $('div.selectStyles__option=New York, NY')
-    await city.click();
-    await newYork.waitForDisplayed({ timeout: 5000 });
-    await newYork.click();
 
-      
-    const addClinicButton = await $('div.styles_submitBtn__jK6DU > button');
+    const statusOption = await $('div.selectStyles__option=state');     
+    const cityOption = await $('div.selectStyles__option=New York, NY')
+
+    const addClinicButton = await $('.styles_container__pnjAI button.styles_btn___s1BB');
+    
+    await clinicnameField.waitForDisplayed({ timeout: 5000 });
+    await clinicnameField.setValue(clinicnameFieldValue);
+
+
+    await addressField.waitForDisplayed({ timeout: 5000 });
+    await clinicFormAddress.setValue(addressFieldValue);
+       
+    await status.waitForDisplayed({ timeout: 5000 });
+    await status.click();
+    await statusOption.waitForDisplayed({ timeout: 5000 });
+    await statusOption.click();
+ 
+    await city.waitForDisplayed({ timeout: 5000 });
+    await city.click();
+    await cityOption.waitForDisplayed({ timeout: 5000 });
+    await cityOption.click();
+  
     await addClinicButton.waitForDisplayed({ timeout: 5000 });
     await addClinicButton.click();
+
+    await browser.reloadSession();
+
 
 });
 
